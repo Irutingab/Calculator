@@ -1,5 +1,6 @@
 
 
+
 def logging_decorator(func):
     def wrapper(*args, **kwargs):
         print(f"Calling {func.__name__} with arguments {args[1:]}")
@@ -8,37 +9,53 @@ def logging_decorator(func):
         return result
     return wrapper
 
+
 def validation_decorator(func):
     def wrapper(*args, **kwargs):
         if not all(isinstance(arg, (int, float)) for arg in args[1:]):
-            print(f"Error: All arguments must be met {args[1:]}")
+            print(f"All arguments must be numbers {args[1:]}")
             return None
         return func(*args, **kwargs)
     return wrapper
 
+
 class Calculator:
     @logging_decorator
     @validation_decorator
-    def add(self, a, b):
-        return a + b
+    def add(self, *args):
+        return sum(args)
+
 
     @logging_decorator
     @validation_decorator
-    def subtract(self, a, b):
-        return a - b
+    def subtract(self, *args):
+        result = args[0]
+        for num in args[1:]:
+            result -= num
+        return result
+
 
     @logging_decorator
     @validation_decorator
-    def multiply(self, a, b):
-        return a * b
+    def multiply(self, *args):
+        result = 1
+        for num in args:
+            result *= num
+        return result
+
 
     @logging_decorator
     @validation_decorator
-    def divide(self, a, b):
-        if b == 0:
-            print("Division by zero is not appli")
-            return None
-        return a / b    
+    def divide(self, *args):
+        result = args[0]
+        for num in args[1:]:
+            if num == 0:
+                print("Division by zero is not applicable.")
+            
+                return None
+            result /= num
+        return result
+
 
     def show_menu(self):
         print("\nSelect operation:")
@@ -47,6 +64,7 @@ class Calculator:
         print("3. Multiply")
         print("4. Divide")
         print("5. Exit")
+
 
     def get_input(self):
         while True:
@@ -57,46 +75,53 @@ class Calculator:
                 else:
                     print("Please choose a number between 1 and 5.")
             except ValueError:
-                print(" Please enter a number.")
+                print("Invalid input")
 
-    def get_numbers(self):
+
+    def get_numbers(self, operation=""):
+        numbers = []
         while True:
             try:
-                a = float(input("Enter the first number: "))
-                b = float(input("Enter the second number: "))
-                return a, b
+                num = float(input(f"Enter a number to {operation} (or enter 'q' to finish): "))
+                numbers.append(num)
             except ValueError:
-                print("inputs must be numbers")
+                if len(numbers) > 0:
+                    return numbers
+                print("Inputs must be numbers")
 
+                
     def run(self):
         while True:
             self.show_menu()
             choice = self.get_input()
 
             if choice == 1:  
-                a, b = self.get_numbers()
-                print(f"Result: {self.add(a, b)}")
+                numbers = self.get_numbers("add")
+                result = self.add(*numbers)
+                print(f"Result: {result}")
 
             elif choice == 2:  
-                a, b = self.get_numbers()
-                print(f"Result: {self.subtract(a, b)}")
+                numbers = self.get_numbers("subtract")
+                result = self.subtract(*numbers)
+                print(f"Result: {result}")
 
             elif choice == 3:  
-                a, b = self.get_numbers()
-                print(f"Result: {self.multiply(a, b)}")
+                numbers = self.get_numbers("multiply")
+                result = self.multiply(*numbers)
+                print(f"Result: {result}")
 
             elif choice == 4:  
-                a, b = self.get_numbers()
-                print(f"Result: {self.divide(a, b)}")
+                numbers = self.get_numbers("divide")
+                result = self.divide(*numbers)
+                print(f"Result: {result}")
 
             elif choice == 5:  
                 print("Exiting the calculator")
                 break
-
-
-
+            
+            
 def main():
-    calculator = Calculator()
-    calculator.run()
+    manager = Calculator()
+    manager.run()
 if __name__ == "__main__":
     main()

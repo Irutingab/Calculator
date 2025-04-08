@@ -1,4 +1,4 @@
-from calculator import Calculator
+from calc import Calculator
 
 
 def main():
